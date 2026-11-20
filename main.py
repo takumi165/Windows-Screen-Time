@@ -12,3 +12,5 @@ GetCurrentProcessId = kernel32.GetCurrentProcessId()
 
 print(GetForegroundWindow)
 print(GetCurrentProcessId)
+
+#ブランチが作成できたか確認
