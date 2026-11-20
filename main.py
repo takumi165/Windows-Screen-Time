@@ -1,6 +1,7 @@
 import ctypes
 
 from ctypes import windll
+from ctypes import wintypes
 
 user32 = windll.user32
 kernel32 = windll.kernel32
@@ -13,4 +14,16 @@ GetCurrentProcessId = kernel32.GetCurrentProcessId()
 print(GetForegroundWindow)
 print(GetCurrentProcessId)
 
-#ブランチが作成できたか確認
+GetWindowThreadProcessId = user32.GetWindowThreadProcessId
+GetWindowThreadProcessId.argtypes = [
+    wintypes.HWND,
+    wintypes.LPDWORD
+]
+
+pid = ctypes.c_ulong(0)
+
+GetWindowThreadProcessId.restype = wintypes.DWORD
+
+GetWindowThreadProcessId(GetForegroundWindow,ctypes.byref(pid))
+
+print(GetWindowThreadProcessId(GetForegroundWindow,ctypes.byref(pid)))
