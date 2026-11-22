@@ -1,29 +1,50 @@
 import ctypes
+import time
 
 from ctypes import windll
 from ctypes import wintypes
+
+time.sleep(5)
 
 user32 = windll.user32
 kernel32 = windll.kernel32
 
 print(user32)
 
-GetForegroundWindow = user32.GetForegroundWindow()
+GetForegroundWindow = user32.GetForegroundWindow
 GetCurrentProcessId = kernel32.GetCurrentProcessId()
 
-print(GetForegroundWindow)
-print(GetCurrentProcessId)
-
 GetWindowThreadProcessId = user32.GetWindowThreadProcessId
+
+#引数の型を指定
 GetWindowThreadProcessId.argtypes = [
     wintypes.HWND,
     wintypes.LPDWORD
 ]
 
-pid = ctypes.c_ulong(0)
+#PIDを受け取る変数の型を指定
+foregroundpid = ctypes.c_ulong(0)
 
+#戻り値の型を指定
 GetWindowThreadProcessId.restype = wintypes.DWORD
 
-GetWindowThreadProcessId(GetForegroundWindow,ctypes.byref(pid))
+#関数を実行(ウィンドウハンドル,変数のポインター)
+GetWindowThreadProcessId(GetForegroundWindow(),ctypes.byref(foregroundpid))
 
-print(GetWindowThreadProcessId(GetForegroundWindow,ctypes.byref(pid)))
+print(foregroundpid.value)
+
+#現在のPIDを保持する
+beforewindow = foregroundpid.value
+
+#10秒後に使用しているウィンドウを取得
+time.sleep(10)
+GetWindowThreadProcessId(GetForegroundWindow(),ctypes.byref(foregroundpid))
+print(foregroundpid.value)
+
+
+#新たに取得したPIDと保持しているPIDを比較
+afterwindow = foregroundpid.value
+if(beforewindow == afterwindow):
+    print("10秒使用しています")
+else:
+    print("アプリケーションが変更されました")
